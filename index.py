@@ -1,7 +1,10 @@
 import tweepy
 import os
+import sys
 import json
 from rake_nltk import Rake
+from Naked.toolshed.shell import execute_js, muterun_js
+
 
 CONSUMER_KEY = '1nAA0T2RHF7x3v05nHVpbSdCo'
 CONSUMER_SECRET = 'Sp46w9cnSRKzYVNoHPTVq1CT4pFpOgUq2h9k0XGslZ5kqBQcaD'
@@ -11,6 +14,8 @@ oauth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 oauth.set_access_token(ACCESS_TOKEN, ACCESS_SECRET)
 api = tweepy.API(oauth)
 
+JS_TO_RUN = 'index.js'
+
 r = Rake()
 for mention in tweepy.Cursor(api.mentions_timeline).items():
     message = ''
@@ -19,6 +24,12 @@ for mention in tweepy.Cursor(api.mentions_timeline).items():
     message += user_tweet_to
     r.extract_keywords_from_text(mention.text.replace('@FactCheckBotHNY', ''))
     ranked_phrases = r.get_ranked_phrases()
+    response = muterun_js(JS_TO_RUN, 'trump obama cheese iran')
+    if response.exitcode == 0:
+      print(str(response.stdout))
+    else:
+      print(str(response.stderr))
+    
     
     
     #api.update_status(message)
