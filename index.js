@@ -16,5 +16,6 @@
                 }).fail(function(err) {
                 throw err;
                 });
-                return urls;
+                //return urls;
+                process.stdout.write(urls);
             }
