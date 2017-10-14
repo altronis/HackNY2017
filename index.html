@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<!-- Joey Jiemjitpolchai -->
+<html> 
+	<head> 
+		<title> </title>
+		<meta charset="UTF-8">
+        <style> </style>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script>
+            function initialize(){
+                testDiv = document.getElementById("test");
+                webUrl = "";
+            }
+
+            function query(q){
+                urls = [];
+                var url = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
+                url += '?' + $.param({
+                'api-key': "223293e7d64544aa8e7eef843508be06",
+                'q': q
+                });
+                $.ajax({
+                url: url,
+                method: 'GET',
+                }).done(function(result) {
+                console.log(result);
+                for(i = 0; i < 6; i++){
+                 urls.push(result.response.docs[i].web_url);   
+                }
+                }).fail(function(err) {
+                throw err;
+                });
+                return urls;
+            }
+
+            function display(){
+                for(i = 0; i < 6; i++){
+                    webUrl += urls[i] + " ";
+                }
+                testDiv.innerHTML = webUrl;
+            }
+        </script>
+	</head>
+	<body onload = "initialize();"> 
+		<div id = "test">
+            
+        </div>
+        <button onclick = "query('Obama');"> Click me</button>
+        <button onclick = "display();"> Click me to display</button>
+	</body>
+	
+</html>
