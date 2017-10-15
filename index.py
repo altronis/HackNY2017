@@ -83,19 +83,18 @@ for mention in tweepy.Cursor(api.mentions_timeline).items():
     urls_to = []
     r = requests.get("http://api.nytimes.com/svc/search/v2/articlesearch.json?q="+nyt_url_format(s)+"&api-key=223293e7d64544aa8e7eef843508be06")
     data = r.json()
-    if data["response"]["meta"]["hits"] != 0: 
+    if data["response"]["meta"]["hits"] != 0:
+        avg = 0;
+        for i in range(5):
+            avg += title_compare(data["response"]["docs"][i]['headline']['main'], s)
+        avg /= 5
         nyturl = data["response"]["docs"][0]['web_url']
         nyttitle = data["response"]["docs"][0]['headline']['main']
-        if title_compare(nyttitle, s) > .15:
+        if title_compare(nyttitle, s) >= .20:
             urls_to.append(nyturl)
 
-        avg = title_compare(nyttitle, s)
         print(avg)
-        avg = avg * 500 - 50
-    ##    if avg >= 0.3:
-    ##        message += " My sources lean 'YES': "
-    ##    else:
-    ##        message += " My sources lean 'NO': "
+        avg = (avg*100-15) * 5
         print(avg)
         message += " I am "+str(int(avg))+"% certain: "
         time.sleep(1)
