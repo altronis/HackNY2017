@@ -85,7 +85,7 @@ for mention in tweepy.Cursor(api.mentions_timeline).items():
     data = r.json()
     if data["response"]["meta"]["hits"] != 0: 
         nyturl = data["response"]["docs"][0]['web_url']
-        nyttitle = data["response"]["docs"][0]['snippet']
+        nyttitle = data["response"]["docs"][0]['headline']['main']
         if title_compare(nyttitle, s) > .15:
             urls_to.append(nyturl)
 
