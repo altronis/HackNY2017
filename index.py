@@ -2,6 +2,7 @@ import tweepy
 import os
 import time
 import sys
+import urllib
 import json
 import requests
 from rake_nltk import Rake
@@ -40,6 +41,15 @@ def propublica_search(s):
     data = r.json()
     print(data)
     return data
+
+#GIPHY
+def giphy_rand():
+    file = open(urllib.request.urlopen(gifurl))
+    print(file)
+    return file
+                    
+                                    
+
     
 
 #TWITTER
@@ -109,7 +119,18 @@ for mention in tweepy.Cursor(api.mentions_timeline).items():
 
         api.update_status(message, reply_id)
     except:
-        api.update_status(message+' oh no', reply_id)    
+        gif_get_url = "https://api.giphy.com/v1/gifs/random?api_key=mbafGO3L2IFZU2sU6iNlUXYyVyBY2Ob8&tag=funny&rating=PG-13"
+        giphy_key = 'mbafGO3L2IFZU2sU6iNlUXYyVyBY2Ob8'
+        data = requests.get(gif_get_url).json()
+        gifurl = data["data"]["url"]
+        filename = 'temp.jpg'
+        request = requests.get(gifurl, stream=True)
+        if request.status_code == 200:
+            with open(filename, 'wb') as image:
+                for chunk in request:
+                    image.write(chunk)
+            api.update_with_media(filename)
+            os.remove(filename)
     break
 
     
