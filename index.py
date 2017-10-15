@@ -5,9 +5,9 @@ import sys
 import urllib
 import json
 import requests
-from rake_nltk import Rake
-from Naked.toolshed.shell import execute_js, muterun_js
-from nytimesarticle import articleAPI
+##from rake_nltk import Rake
+##from Naked.toolshed.shell import execute_js, muterun_js
+##from nytimesarticle import articleAPI
 from difflib import SequenceMatcher
 
 def nyt_url_format(s):
@@ -49,9 +49,6 @@ def giphy_rand():
     return file
                     
                                     
-
-    
-
 #TWITTER
 CONSUMER_KEY = '1nAA0T2RHF7x3v05nHVpbSdCo'
 CONSUMER_SECRET = 'Sp46w9cnSRKzYVNoHPTVq1CT4pFpOgUq2h9k0XGslZ5kqBQcaD'
