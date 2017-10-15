@@ -1,14 +1,12 @@
 import tweepy
-import os
 import time
-import sys
 import urllib
 import json
 import requests
-##from rake_nltk import Rake
 ##from Naked.toolshed.shell import execute_js, muterun_js
 ##from nytimesarticle import articleAPI
 from difflib import SequenceMatcher
+
 
 def nyt_url_format(s):
     str_list = s.split(' ')
@@ -17,11 +15,13 @@ def nyt_url_format(s):
         newstr += '+' + str_list[i]
     return newstr
 
+
 def title_compare(s, s2):
     s = s.lower()
     s2 = s2.lower()
     m = SequenceMatcher(None, s, s2)
     return m.ratio()
+
 
 #GOOGLE
 def goo_shorten_url(url):
@@ -31,6 +31,7 @@ def goo_shorten_url(url):
     r = requests.post(post_url, data=json.dumps(payload), headers=headers)
     data = r.json()
     return data['id']
+
 
 #PROPUBLICA
 def propublica_search(s):
@@ -42,11 +43,13 @@ def propublica_search(s):
     print(data)
     return data
 
+
 #GIPHY
 def giphy_rand():
     file = open(urllib.request.urlopen(gifurl))
     print(file)
     return file
+
 
 #beautiful
 def shit():
@@ -66,25 +69,22 @@ oauth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 oauth.set_access_token(ACCESS_TOKEN, ACCESS_SECRET)
 api = tweepy.API(oauth)
 
+
 #NYTIMES
 NYT_api_key = '223293e7d64544aa8e7eef843508be06'
 
-# r = Rake()
+
 for mention in tweepy.Cursor(api.mentions_timeline).items():
     message = ''
     s = mention.text.replace('@FactCheckBotHNY', '')
     user_tweet_to = '@'+mention.user.screen_name
     reply_id = mention.id
     message += user_tweet_to
-    # r.extract_keywords_from_text(mention.text.replace('@FactCheckBotHNY', ''))
-    # ranked_phrases = r.get_ranked_phrases()
-
-    # print(ranked_phrases)
     urls_to = []
     r = requests.get("http://api.nytimes.com/svc/search/v2/articlesearch.json?q="+nyt_url_format(s)+"&api-key=223293e7d64544aa8e7eef843508be06")
     data = r.json()
     if data["response"]["meta"]["hits"] != 0:
-        avg = 0;
+        avg = 0
         for i in range(5):
             avg += title_compare(data["response"]["docs"][i]['headline']['main'], s)
         avg /= 5
@@ -92,17 +92,13 @@ for mention in tweepy.Cursor(api.mentions_timeline).items():
         nyttitle = data["response"]["docs"][0]['headline']['main']
         if title_compare(nyttitle, s) >= .20:
             urls_to.append(nyturl)
-
         print(avg)
         avg = (avg*100-15) * 5
         print(avg)
         message += " I am "+str(int(avg))+"% certain: "
         time.sleep(1)
-        
         for url in urls_to:
             message += goo_shorten_url(url) + ' '
-
-     
         if len(message) > 140:
             message = message[:140]
         if len(urls_to) == 0:
@@ -116,16 +112,4 @@ for mention in tweepy.Cursor(api.mentions_timeline).items():
         data = requests.get(gif_get_url).json()
         gifurl = data["data"]["url"]       
         api.update_status(message+' Your tweet makes no sense '+gifurl, reply_id)
-
-##        filename = 'temp.jpg'
-##        request = requests.get(gifurl, stream=True)
-##        if request.status_code == 200:
-##            with open(filename, 'wb') as image:
-##                for chunk in request:
-##                    image.write(chunk)
-##            api.update_with_media(filename)
-##            os.remove(filename)
     break
-
-    
-    
