@@ -47,6 +47,14 @@ def giphy_rand():
     file = open(urllib.request.urlopen(gifurl))
     print(file)
     return file
+
+#beautiful
+def shit():
+    gif_get_url = "https://api.giphy.com/v1/gifs/random?api_key=mbafGO3L2IFZU2sU6iNlUXYyVyBY2Ob8&tag=funny&rating=PG-13"
+    giphy_key = 'mbafGO3L2IFZU2sU6iNlUXYyVyBY2Ob8'
+    data = requests.get(gif_get_url).json()
+    gifurl = data["data"]["url"]       
+    api.update_status(user_tweet_to+' Your tweet makes no sense '+gifurl, reply_id)
                     
                                     
 #TWITTER
@@ -75,59 +83,49 @@ for mention in tweepy.Cursor(api.mentions_timeline).items():
     urls_to = []
     r = requests.get("http://api.nytimes.com/svc/search/v2/articlesearch.json?q="+nyt_url_format(s)+"&api-key=223293e7d64544aa8e7eef843508be06")
     data = r.json()
-    try:
+    if data["response"]["meta"]["hits"] != 0: 
         nyturl = data["response"]["docs"][0]['web_url']
-        urls_to.append(nyturl)
         nyttitle = data["response"]["docs"][0]['snippet']
-        ppdata = propublica_search(s)
-        ppurl = ppdata["results"][0]["bills"][0]["govtrack_url"]
-        urls_to.append(ppurl)
-        pptitle = ppdata["results"][0]["bills"][0]["title"]
-        print(pptitle)
+        if title_compare(nyttitle, s) > .15:
+            urls_to.append(nyturl)
 
-    ##    print(title_compare(nyttitle, s))
-    ##    print(title_compare(pptitle, s))
-        avg = (title_compare(nyttitle, s)+title_compare(pptitle, s))/2;
+        avg = title_compare(nyttitle, s)
         print(avg)
-        if avg >= 0.3:
-            message += " My sources lean 'YES': "
-        else:
-            message += " My sources lean 'NO': "
+        avg = avg * 500 - 50
+    ##    if avg >= 0.3:
+    ##        message += " My sources lean 'YES': "
+    ##    else:
+    ##        message += " My sources lean 'NO': "
+        print(avg)
+        message += " I am "+str(int(avg))+"% certain: "
         time.sleep(1)
-    ##    for i in range(0, len(ranked_phrases)):
-    ##        print(ranked_phrases[i])
-    ##        r = requests.get("http://api.nytimes.com/svc/search/v2/articlesearch.json?q="+nyt_url_format(ranked_phrases[i])+"&api-key=223293e7d64544aa8e7eef843508be06")
-    ##        data = r.json()
-    ##        urls_to.append(data["response"]["docs"][0]['web_url'])
-    ##        if i == 0:
-    ##            print(title_compare(data["response"]["docs"][0]['headline']['main'], ' '.join(ranked_phrases)))
-    ##            if title_compare(data["response"]["docs"][0]['headline']['main'], ' '.join(ranked_phrases)) >= 0.3:
-    ##                message += " My sources lean 'YES': "
-    ##            else:
-    ##                message += " My sources lean 'NO': "
-    ##        time.sleep(1)
-    ##        break
+        
         for url in urls_to:
             message += goo_shorten_url(url) + ' '
 
-        print(message)
+     
         if len(message) > 140:
             message = message[:140]
-
-        api.update_status(message, reply_id)
-    except:
+        if len(urls_to) == 0:
+            shit()
+        else:
+            print(message)
+            api.update_status(message, reply_id)
+    else:
         gif_get_url = "https://api.giphy.com/v1/gifs/random?api_key=mbafGO3L2IFZU2sU6iNlUXYyVyBY2Ob8&tag=funny&rating=PG-13"
         giphy_key = 'mbafGO3L2IFZU2sU6iNlUXYyVyBY2Ob8'
         data = requests.get(gif_get_url).json()
-        gifurl = data["data"]["url"]
-        filename = 'temp.jpg'
-        request = requests.get(gifurl, stream=True)
-        if request.status_code == 200:
-            with open(filename, 'wb') as image:
-                for chunk in request:
-                    image.write(chunk)
-            api.update_with_media(filename)
-            os.remove(filename)
+        gifurl = data["data"]["url"]       
+        api.update_status(message+' Your tweet makes no sense '+gifurl, reply_id)
+
+##        filename = 'temp.jpg'
+##        request = requests.get(gifurl, stream=True)
+##        if request.status_code == 200:
+##            with open(filename, 'wb') as image:
+##                for chunk in request:
+##                    image.write(chunk)
+##            api.update_with_media(filename)
+##            os.remove(filename)
     break
 
     
