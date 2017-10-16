@@ -1,2 +1,5 @@
 tweepy==3.5.0
+Naked==0.1.31
+rake-nltk==1.0.1
+fuzzywuzzy==0.15.1
 -e git+https://github.com/davidcox143/nytimesarchive.git@31e8c8e7a07f65d21ad405e1c75cd0a2b006937b#egg=nytimesarchive
