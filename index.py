@@ -52,7 +52,7 @@ def giphy_rand():
 
 
 #beautiful
-def shit():
+def catastrophe():
     gif_get_url = "https://api.giphy.com/v1/gifs/random?api_key=mbafGO3L2IFZU2sU6iNlUXYyVyBY2Ob8&tag=funny&rating=PG-13"
     giphy_key = 'mbafGO3L2IFZU2sU6iNlUXYyVyBY2Ob8'
     data = requests.get(gif_get_url).json()
@@ -102,7 +102,7 @@ for mention in tweepy.Cursor(api.mentions_timeline).items():
         if len(message) > 140:
             message = message[:140]
         if len(urls_to) == 0:
-            shit()
+            catastrophe()
         else:
             print(message)
             api.update_status(message, reply_id)
